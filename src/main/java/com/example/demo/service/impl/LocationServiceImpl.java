@@ -9,27 +9,40 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class LocationServiceImpl implements LocationService {
     private static final String GoogleLocationApi = "";
 
     @Override
     public String getLocation (String location) throws Exception{
-        CloseableHttpClient httpclient = HttpClients.createDefault();
-        HttpGet httpget = new HttpGet(GoogleLocationApi + location);
-        return httpclient.execute(httpget, httpResponse -> {
-            int statusCode = httpResponse.getStatusLine().getStatusCode();
-            if (statusCode >= 200 && statusCode < 300) {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet(GoogleLocationApi + location);
+
+        String response = httpClient.execute(httpGet, httpResponse -> {
+            int status = httpResponse.getStatusLine().getStatusCode();
+            if (status >= 200 && status < 300) {
                 return EntityUtils.toString(httpResponse.getEntity());
             } else {
                 try {
-                    throw new Exception("Unexpected response status: " + statusCode);
+                    throw new Exception("Unexpected response status: " + status);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }
-        } );
+        });
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rootNode = mapper.readTree(response);
+        JsonNode results = rootNode.get("results");
+        if (results != null && results.isArray() && !results.isEmpty()) {
+            JsonNode result = results.get(0);
+            JsonNode locations = result.path("geometry").path("location");
+
+            double lat = locations.get("lat").asDouble();
+            double lng = locations.get("lng").asDouble();
+            return lat + "," + lng;
+        }
+        return "";
     }
 }

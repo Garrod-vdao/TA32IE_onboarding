@@ -15,7 +15,11 @@ public class UVServiceImpl implements UVService {
     }
 
     @Override
-    public UVIndexResponse getCurrentUV(Double latitude, Double longitude) {
+    public UVIndexResponse getCurrentUV(String location) throws Exception {
+        LocationServiceImpl locationService = new LocationServiceImpl();
+        String latLng = locationService.getLocation(location);
+        String latitude = latLng.substring(0, latLng.indexOf(","));
+        String longitude = latLng.substring(latLng.indexOf(",") + 1);
         String url = String.format(
                 "https://currentuvindex.com/api/v1/uvi?latitude=%f&longitude=%f",
                 latitude, longitude

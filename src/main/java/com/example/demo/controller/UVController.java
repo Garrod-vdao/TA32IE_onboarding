@@ -40,23 +40,11 @@ public class UVController {
     })
     @GetMapping("/current")
     public ResponseEntity<ApiResponseMine<UVIndexResponse>> getUV(
-            @Parameter(description = "lat", example = "40.7128")
-            @RequestParam(defaultValue = "40.7128") Double latitude,
-            @Parameter(description = "lng", example = "-74.0060")
-            @RequestParam(defaultValue = "-74.0060") Double longitude
+            @Parameter(description = "location", example = "Beijing")
+            @RequestParam(defaultValue = "Beijing") String location
     ) {
         try {
-            if (latitude < -90 || latitude > 90) {
-                return ResponseEntity.badRequest()
-                        .body(new ApiResponseMine<>(400, "Latitude must be between -90 and 90 degrees", null));
-            }
-
-            if (longitude < -180 || longitude > 180) {
-                return ResponseEntity.badRequest()
-                        .body(new ApiResponseMine<>(400, "Longitude must be between -180 and 180 degrees", null));
-            }
-
-            UVIndexResponse response = uvService.getCurrentUV(latitude, longitude);
+            UVIndexResponse response = uvService.getCurrentUV(location);
             return ResponseEntity.ok(new ApiResponseMine<>(200, "Success", response));
 
         } catch (Exception e) {
