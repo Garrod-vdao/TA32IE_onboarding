@@ -1,7 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.dto.UVIndexResponse;
+import com.example.demo.model.dto.UVCurrentIndexResponse;
 import com.example.demo.model.comm.ApiResponseMine;
+import com.example.demo.model.dto.UVForecastIndexResponse;
 import com.example.demo.service.UVService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,12 +40,12 @@ public class UVController {
             )
     })
     @GetMapping("/current")
-    public ResponseEntity<ApiResponseMine<UVIndexResponse>> getUV(
+    public ResponseEntity<ApiResponseMine<UVCurrentIndexResponse>> getCurrentUV(
             @Parameter(description = "location", example = "Beijing")
             @RequestParam(defaultValue = "Beijing") String location
     ) {
         try {
-            UVIndexResponse response = uvService.getCurrentUV(location);
+            UVCurrentIndexResponse response = uvService.getCurrentUV(location);
             return ResponseEntity.ok(new ApiResponseMine<>(200, "Success", response));
 
         } catch (Exception e) {
@@ -52,4 +53,23 @@ public class UVController {
                     .body(new ApiResponseMine<>(500, e.getMessage(), null));
         }
     }
+
+    @GetMapping("/forecast")
+    public ResponseEntity<ApiResponseMine<UVForecastIndexResponse>> getForecastUV(
+            @Parameter(description = "location", example = "Beijing")
+            @RequestParam(defaultValue = "Beijing") String location,
+            @Parameter(description = "forecast day length", example = "1")
+            @RequestParam(defaultValue = "1") int day
+    ) {
+        try {
+            UVForecastIndexResponse response = uvService.getForecastUV(location, day);
+            return ResponseEntity.ok(new ApiResponseMine<>(200, "Success", response));
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(new ApiResponseMine<>(500, e.getMessage(), null));
+        }
+    }
+
+
 }

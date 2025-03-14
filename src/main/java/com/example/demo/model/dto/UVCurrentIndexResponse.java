@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class UVIndexResponse {
+public class UVCurrentIndexResponse {
     private Location location;
     private Current current;
 
