@@ -15,7 +15,7 @@ public interface AusLocationRepository extends JpaRepository<AusCity, Long> {
                     "AND Long_precise >= :lon - 0.01 " +
                     "AND Long_precise <= :lon + 0.01",
             nativeQuery = true)
-    boolean existsByCoordinates(
+    Long existsByCoordinates(
             @Param("lat") Double latitude,
             @Param("lon") Double longitude
     );

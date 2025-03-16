@@ -5,6 +5,7 @@ import com.example.demo.model.dto.UVCurrentIndexResponse;
 import com.example.demo.model.dto.UVForecastIndexResponse;
 import com.example.demo.repository.AusLocationRepository;
 import com.example.demo.service.UVService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,22 +14,24 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class UVServiceImpl implements UVService {
 
-    private final RestTemplate restTemplate;
-    private final AusLocationRepository ausLocationRepository;
+    @Autowired
+    private RestTemplate restTemplate;
+    @Autowired
+    private AusLocationRepository ausLocationRepository;
     private static final String WEATHER_API_KEY = "0e5b56bbd20e48739e930026251403";
     private static final String WEATHER_API_URL = "http://api.weatherapi.com/v1/current.json";
     private static final String FORECAST_API_URL = "http://api.weatherapi.com/v1/forecast.json";
 
-    public UVServiceImpl(RestTemplate restTemplate, AusLocationRepository ausLocationRepository) {
-        this.restTemplate = restTemplate;
-        this.ausLocationRepository = ausLocationRepository;
-    }
+    // public UVServiceImpl(RestTemplate restTemplate, AusLocationRepository ausLocationRepository) {
+    //     this.restTemplate = restTemplate;
+    //     this.ausLocationRepository = ausLocationRepository;
+    // }
 
     private boolean isLocatedInAus(double latitude, double longitude) {
         return ausLocationRepository.existsByCoordinates(
                 latitude,
                 longitude
-        );
+        ) > 0;
     }
 
     @Override

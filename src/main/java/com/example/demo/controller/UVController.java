@@ -4,6 +4,7 @@ import com.example.demo.model.dto.UVCurrentIndexResponse;
 import com.example.demo.model.comm.ApiResponseMine;
 import com.example.demo.model.dto.UVForecastIndexResponse;
 import com.example.demo.service.UVService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,11 +19,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @CrossOrigin
 public class UVController {
 
-    private final UVService uvService;
+    @Autowired
+    private UVService uvService;
 
-    public UVController(UVService uvService) {
-        this.uvService = uvService;
-    }
+    //public UVController(UVService uvService) {
+    //    this.uvService = uvService;
+    //}
 
     @Operation(summary = "Get UV index", description = "Based on lat & lng")
     @ApiResponses(value = {
