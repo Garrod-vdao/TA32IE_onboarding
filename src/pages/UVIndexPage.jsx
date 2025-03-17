@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-import Header from '../components/Header';
 import axios from 'axios';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
@@ -43,7 +42,7 @@ const UVIndexApp = () => {
     setForecastDay(null);
 
     try {
-      const response = await axios.get(`http://ta32ie.me:8080/api/uv-indices/current?location=${encodeURIComponent(city)}`);
+      const response = await axios.get(`/api/uv-indices/current?location=${encodeURIComponent(city)}`);
 
       if (response.data && response.data.status === 200 && response.data.data) {
         setUvData({
@@ -56,7 +55,7 @@ const UVIndexApp = () => {
     } catch (err) {
       console.error('Error fetching UV data:', err);
 
-      // Check if it's a 404 or similar error (likely city not found)
+
       if (err.response && (err.response.status === 500)) {
         setError('Please enter an Australian city name');
       } else {
@@ -103,7 +102,7 @@ const UVIndexApp = () => {
     setForecastDay(dayIndex);
 
     try {
-      const response = await axios.get(`http://ta32ie.me:8080/api/uv-indices/forecast?location=${encodeURIComponent(uvData.city)}&day=3`);
+      const response = await axios.get(`/api/uv-indices/forecast?location=${encodeURIComponent(uvData.city)}&day=3`);
 
       if (response.data && response.data.status === 200 && response.data.data) {
         // Process data for the chart

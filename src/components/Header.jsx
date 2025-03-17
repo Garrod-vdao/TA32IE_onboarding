@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
-import logo from '../assets/logo.png';
+import logo2 from '../assets/logo2.png';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,7 +32,7 @@ const Header = () => {
             <Link to="/">
               <img
                 className="h-16 w-auto"
-                src={logo}
+                src={logo2}
                 alt="Logo"
               />
             </Link>
