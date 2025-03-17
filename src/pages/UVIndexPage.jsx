@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
-import { validateCityName, encodeParam } from '../components/SecurityUtils';
 
 // Register ChartJS components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
@@ -16,19 +15,13 @@ const UVIndexApp = () => {
   const [forecastData, setForecastData] = useState(null);
   const [loadingForecast, setLoadingForecast] = useState(false);
   const [forecastError, setForecastError] = useState('');
-  
-  // Track API calls for rate limiting
-  const [apiCallCount, setApiCallCount] = useState(0);
-  const lastApiCallTime = useRef(Date.now());
 
-  // Enhanced validation with our security utility
   const validateCity = (value) => {
-    const validation = validateCityName(value);
-    if (!validation.valid) {
-      return validation.message;
+    if (!value.trim()) {
+      return 'Please enter a city name';
     }
 
-    // Additional check for Australian cities
+    // Check if input contains only English letters and spaces
     if (!/^[A-Za-z\s]+$/.test(value)) {
       return 'Please enter only English letters for city name';
     }
@@ -37,25 +30,6 @@ const UVIndexApp = () => {
   };
 
   const handleSearch = async () => {
-    // Rate limiting check
-    const now = Date.now();
-    if (now - lastApiCallTime.current < 1000) { // Prevent requests faster than once per second
-      setError('Please wait before trying again');
-      return;
-    }
-    
-    // Check for too many calls in short period
-    if (apiCallCount > 10) {
-      const timeElapsed = now - lastApiCallTime.current;
-      if (timeElapsed < 60000) { // Within a minute
-        setError('Too many searches. Please wait a moment before trying again.');
-        return;
-      } else {
-        // Reset counter after a minute
-        setApiCallCount(0);
-      }
-    }
-
     const validationError = validateCity(city);
     if (validationError) {
       setError(validationError);
@@ -66,14 +40,9 @@ const UVIndexApp = () => {
     setError('');
     setForecastData(null);
     setForecastDay(null);
-    
-    // Update API call tracking
-    setApiCallCount(prevCount => prevCount + 1);
-    lastApiCallTime.current = now;
 
     try {
-      // Use encodeParam from SecurityUtils for safe URL encoding
-      const response = await axios.get(`/api/uv-indices/current?location=${encodeParam(city)}`);
+      const response = await axios.get(`/api/uv-indices/current?location=${encodeURIComponent(city)}`);
 
       if (response.data && response.data.status === 200 && response.data.data) {
         setUvData({
@@ -85,6 +54,7 @@ const UVIndexApp = () => {
       }
     } catch (err) {
       console.error('Error fetching UV data:', err);
+
 
       if (err.response && (err.response.status === 500)) {
         setError('Please enter an Australian city name');
@@ -99,12 +69,9 @@ const UVIndexApp = () => {
   };
 
   const handleInputChange = (e) => {
-    // Limit input length for additional security
-    if (e.target.value.length <= 50) {
-      setCity(e.target.value);
-      if (error) {
-        setError(''); // Clear error when user starts typing
-      }
+    setCity(e.target.value);
+    if (error) {
+      setError(''); // Clear error when user starts typing
     }
   };
 
@@ -123,31 +90,19 @@ const UVIndexApp = () => {
     return { color: 'bg-purple-500', level: 'Extreme' };
   };
 
-  // Get forecast data with enhanced security
+  // Get forecast data
   const fetchForecastData = async (dayIndex) => {
     if (!uvData || !uvData.city) {
       setForecastError('Please search for a city first');
       return;
     }
-    
-    // Rate limiting for forecast API calls
-    const now = Date.now();
-    if (now - lastApiCallTime.current < 1000) {
-      setForecastError('Please wait before trying again');
-      return;
-    }
-    
-    // Update API call tracking
-    setApiCallCount(prevCount => prevCount + 1);
-    lastApiCallTime.current = now;
 
     setLoadingForecast(true);
     setForecastError('');
     setForecastDay(dayIndex);
 
     try {
-      // Use encodeParam for safe URL encoding
-      const response = await axios.get(`/api/uv-indices/forecast?location=${encodeParam(uvData.city)}&day=3`);
+      const response = await axios.get(`/api/uv-indices/forecast?location=${encodeURIComponent(uvData.city)}&day=3`);
 
       if (response.data && response.data.status === 200 && response.data.data) {
         // Process data for the chart
@@ -245,11 +200,10 @@ const UVIndexApp = () => {
                 className="flex-grow p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onKeyPress={handleKeyPress}
                 aria-label="City name"
-                maxLength={50} // Add explicit maxLength for security
               />
               <button
                 onClick={handleSearch}
-                disabled={loading || apiCallCount > 10}
+                disabled={loading}
                 className="bg-yellow-400 text-white py-2 px-4 rounded hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition disabled:opacity-50"
                 aria-label="Search"
               >
