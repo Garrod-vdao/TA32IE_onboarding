@@ -5,8 +5,8 @@ const Footer = () => {
   const navItems = [
     { name: 'Home', href: '/' },
     { name: 'Check UV', href: '/check-uv' },
-    { name: 'Damages and Tips', href: '/damages-tips' },
-    { name: 'Product', href: '/product' },
+    // { name: 'Damages and Tips', href: '/damages-tips' },
+    // { name: 'Product', href: '/product' },
   ];
 
   return (
@@ -21,8 +21,8 @@ const Footer = () => {
             <p className="text-gray-400 mt-2">Helping you stay safe in the sun</p>
           </div>
 
-          {/* Navigation Links */}
-          <nav className="flex flex-wrap justify-center gap-x-8 gap-y-4">
+          {/* Navigation Links - Adjusted position */}
+          <nav className="flex flex-wrap mx-auto md:mx-0 gap-x-10 gap-y-4">
             {navItems.map((item) => (
               <Link
                 key={item.name}

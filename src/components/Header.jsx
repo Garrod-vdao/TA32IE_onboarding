@@ -6,7 +6,7 @@ import logo2 from '../assets/logo2.png';
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  
+
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -14,8 +14,8 @@ const Header = () => {
   const navItems = [
     { name: 'Home', href: '/' },
     { name: 'Check UV', href: '/check-uv' },
-    { name: 'Damages and Tips', href: '/damages-tips' },
-    { name: 'Product', href: '/product' },
+    // { name: 'Damages and Tips', href: '/damages-tips' },
+    // { name: 'Product', href: '/product' },
   ];
 
   // Function to check if a nav item is active
@@ -26,28 +26,29 @@ const Header = () => {
   return (
     <header className="bg-white shadow-md w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          {/* Logo */}
-          <div className="flex-shrink-0 flex items-center">
-            <Link to="/">
+        <div className="flex h-16">
+          {/* Logo - Left side */}
+          <div className="flex-shrink-0 flex items-center mr-auto">
+            <Link to="/" className="flex items-center">
               <img
                 className="h-16 w-auto"
                 src={logo2}
                 alt="Logo"
               />
+              <span className="ml-2 text-xl font-bold text-yellow-400 flex items-center self-center">SunSmartAussie</span>
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center">
-            <nav className="ml-10 flex space-x-6">
+          {/* Desktop Navigation - Centered */}
+          <div className="hidden md:flex items-center mx-auto">
+            <nav className="flex space-x-10">
               {navItems.map((item) => (
                 <Link
                   key={item.name}
                   to={item.href}
                   className={`px-3 py-2 rounded-md font-medium transition duration-300 ease-in-out border-b-2 
-                    ${isActive(item.href) 
-                      ? 'text-yellow-600 bg-yellow-50 border-yellow-500' 
+                    ${isActive(item.href)
+                      ? 'text-yellow-600 bg-yellow-50 border-yellow-500'
                       : 'text-gray-800 hover:text-yellow-500 hover:bg-yellow-100 border-transparent hover:border-yellow-500'
                     }`}
                 >
@@ -57,8 +58,8 @@ const Header = () => {
             </nav>
           </div>
 
-          {/* Mobile menu button */}
-          <div className="flex md:hidden items-center">
+          {/* Mobile menu button - Right side */}
+          <div className="flex md:hidden items-center ml-auto">
             <button
               onClick={toggleMenu}
               className="text-gray-800 hover:text-yellow-500 focus:outline-none"
@@ -84,8 +85,8 @@ const Header = () => {
                 key={item.name}
                 to={item.href}
                 className={`block px-3 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out border-l-4 
-                  ${isActive(item.href) 
-                    ? 'text-yellow-700 bg-yellow-100 border-yellow-500' 
+                  ${isActive(item.href)
+                    ? 'text-yellow-700 bg-yellow-100 border-yellow-500'
                     : 'text-gray-800 hover:text-yellow-700 hover:bg-yellow-100 border-transparent hover:border-yellow-500'
                   }`}
                 onClick={() => setIsOpen(false)}
